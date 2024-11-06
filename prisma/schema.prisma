@@ -1,0 +1,50 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"  // ou "mysql" ou "sqlite"
+  url      = env("DATABASE_URL") // URL de conexão que você define no arquivo .env
+}
+
+model Event {
+  id     Int     @id @default(autoincrement())
+  name   String
+  artist String
+  date   String
+  time   String
+  venue  String
+  image  String
+  bets   Bet[]
+}
+
+model Bet {
+  id          Int    @id @default(autoincrement())  // ID como tipo Int
+  userId      String
+  eventId     Int
+  fullName    String
+  companyName String
+  apostas     Aposta[]
+  event       Event  @relation(fields: [eventId], references: [id])
+}
+
+model Aposta {
+  id         Int    @id @default(autoincrement())  // ID como tipo Int
+  ingressoId Int
+  pontos     Int
+  betId      Int    // Corrigido para Int, pois é o mesmo tipo de id em Bet
+  bet        Bet    @relation(fields: [betId], references: [id])
+}
+
+model User {
+  id        String      @id @default(uuid())
+  name      String
+  cpf       String   @unique
+  company   String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  points Int 
+}
